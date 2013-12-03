@@ -128,6 +128,8 @@ int main(void)
 		{
 			stop();
 			OCR1B = OCR1A; // 0% duty cycle
+			m_red(OFF);
+			m_green(OFF);
 		}
    		if (dir == RIGHT){
 			if (theta >= 85 && theta <= 95){
@@ -136,8 +138,8 @@ int main(void)
 				 {
 				 	m_usb_tx_string("\nRIGHT fwd");
 				 }
-				 m_red(OFF);
-				 m_green(ON);
+				 m_red(ON);
+				 m_green(OFF);
 			 }else if (theta < 85 || theta > 270){
 				 right();
 				 if(DEBUG ==1)
@@ -145,7 +147,7 @@ int main(void)
 					 m_usb_tx_string("\nRIGHT right");
 				 }
 				 m_red(ON);
-				 m_green(OFF);
+				 m_green(ON);
 			 }else if (theta > 85 && theta < 270){
 				 left();
 				 if(DEBUG ==1)
@@ -169,8 +171,8 @@ int main(void)
 				 	m_usb_tx_string("\nLEFT fwd");
 				 }
 				 fwd();
-				 m_red(OFF);
-				 m_green(ON);
+				 m_red(ON);
+				 m_green(OFF);
 			 }else if (theta > 90 && theta < 265){
 				 right();
 				 if(DEBUG ==1)
@@ -178,7 +180,7 @@ int main(void)
 					m_usb_tx_string("\nLEFT right");
 				 }
 				 m_red(ON);
-				 m_green(OFF);
+				 m_green(ON);
 			 }else if (theta < 90 || theta > 275){
 				 left();
 				 if(DEBUG ==1)
