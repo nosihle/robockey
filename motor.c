@@ -1,4 +1,3 @@
-
 #include "motor.h"
 
 void fwd(void){
@@ -23,4 +22,5 @@ void left(void){
 
 void stop(void){
 	clear(MOTOR,MOTOR_EN);
+	OCR1B = OCR1A;
 }
