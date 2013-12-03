@@ -16,7 +16,7 @@
 
 #define RIGHT 0
 #define LEFT 1
-#define DEBUG 0
+#define DEBUG 1
 
 #define CHANNEL 1
 #define RXADDRESS 0x53 //52,53,54  recv for team 5
