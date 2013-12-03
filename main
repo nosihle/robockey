@@ -1,9 +1,6 @@
 /*
- * Localization.c
- *
- * Created: 11/24/2013 1:08:10 PM
- * 
- */ 
+ 
+*/ 
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,7 +19,7 @@
 #define DEBUG 0
 
 #define CHANNEL 1
-#define RXADDRESS 0x52 //52,53,54
+#define RXADDRESS 0x53 //52,53,54  recv for team 5
 #define TXADDRESS 0xDA
 #define PACKET_LENGTH 10
 
@@ -64,79 +61,70 @@ int main(void)
 	m_usb_init(); // initialize usb
 	
 	// Setup wireless module
-	m_bus_init();
 	m_rf_open(CHANNEL, RXADDRESS, PACKET_LENGTH);
-	
 	sei();//enable global interrupts
+	int b = m_wii_open(); // initialize m_wii
 	
 	m_green(OFF);
 	m_red(OFF);
-	/*
-	while(!m_usb_isconnected()); //wait
-	*/
+	if(DEBUG == 1)
+	{
+		while(!m_usb_isconnected()); //wait
+	}
 	m_green(ON);	
 	
-	int dir = 0; // which goal to drive to
-	
 	theta = 0;
-	/*
-	while(!m_usb_rx_available());
-	usb_rx_flush();
+	if(DEBUG==1)
+	{
+		while(!m_usb_rx_available());
+		usb_rx_flush();
+	    m_usb_tx_string("\nreturn open: ");
+		m_usb_tx_int(b);
+		m_usb_tx_string("\nTheta: ");
+		m_usb_tx_int(theta);
+		m_usb_tx_string("\nstar x: ");
+		m_usb_tx_int(*x);
+		m_usb_tx_string("\nstar y: ");
+		m_usb_tx_int(*y);
+		while(!m_usb_rx_available());
+		usb_rx_flush();
+	}
 	
-	m_usb_tx_string("\nTheta: ");
-	m_usb_tx_int(theta);
-	m_usb_tx_string("\nstar x: ");
-	m_usb_tx_int(*x);
-	
-	while(!m_usb_rx_available());
-	usb_rx_flush();
-	*/
-	m_wii_open(); // initialize m_wii
-
 	// Determine which goal to drive to
+	int dir = 0; // which goal to drive to
 	theta = localize(loc); // find position and orientation
+	theta = localize(loc); // find position and orientation
+
+	int cnt = 0;
+	m_red(OFF);
 	m_green(OFF);
-	m_red(ON);	
-	/*	
-	while(!m_usb_rx_available());
-	usb_rx_flush();
-
-	m_usb_tx_string("\nTheta: ");
-	m_usb_tx_int(theta);
-	m_usb_tx_string("\nstar x: ");
-	m_usb_tx_int(*x);
-	m_usb_tx_string("\nstar y: ");
-	m_usb_tx_int(*y);
-
-	while(!m_usb_rx_available());
-	usb_rx_flush();
-	*/	
-	theta = localize(loc); // find position and orientation
-	
-	if (*x < 0) // starting on left side so go to right goal
-		dir = RIGHT;
-	else // starting on right side so go to left goal
-		dir = LEFT;
-		
 	// while !play
 
 	//while (!play);
-	//m_wait(500);
 	m_green(ON);
 	m_red(ON);
-	/*while(!m_usb_rx_available());
-	usb_rx_flush();
-	*/
+	
     while(1)
     {
 		 theta = localize(loc); // find position and orientation
-		 /*m_usb_tx_string("\nTheta: ");
-		 m_usb_tx_int(theta);
-		 m_usb_tx_string("\nstar x: ");
-		 m_usb_tx_int(*x);
-	 	 m_usb_tx_string("\nstar y: ");
-		 m_usb_tx_int(*y);
-		 m_wait(100);*/
+		 if(cnt == 0)
+		 {
+			 if (*x < 0) // starting on left side so go to right goal
+				dir = RIGHT;
+			else // starting on right side so go to left goal
+				dir = LEFT;
+			cnt++;
+		 }
+		 if(DEBUG ==1)
+		 {
+			 m_usb_tx_string("\nTheta: ");
+			 m_usb_tx_int(theta);
+			 m_usb_tx_string("\nstar x: ");
+			 m_usb_tx_int(*x);
+		 	 m_usb_tx_string("\nstar y: ");
+			 m_usb_tx_int(*y);
+			 //m_wait(100);
+		 }
 		if(*x >= 115 || *x <=-100 )
 		{
 			stop();
@@ -144,45 +132,74 @@ int main(void)
    		if (dir == RIGHT){
 			if (theta >= 85 && theta <= 95){
 				 fwd();
-		//		 m_usb_tx_string("\nRIGHT fwd");
+				 if(DEBUG ==1)
+				 {
+				 	m_usb_tx_string("\nRIGHT fwd");
+				 }
 				 m_red(OFF);
 				 m_green(ON);
 			 }else if (theta < 85 || theta > 270){
 				 right();
-			//	 m_usb_tx_string("\nRIGHT right");
+				 if(DEBUG ==1)
+				 {
+					 m_usb_tx_string("\nRIGHT right");
+				 }
 				 m_red(ON);
 				 m_green(OFF);
 			 }else if (theta > 85 && theta < 270){
 				 left();
-				// m_usb_tx_string("\nRIGHT left");
+				 if(DEBUG ==1)
+				 { 
+				   	  m_usb_tx_string("\nRIGHT left");
+				 }
 				 m_green(ON);
 				 m_red(ON);
 			 }else{
-				 //m_usb_tx_string("\nRIGHT else");
+				 if(DEBUG ==1)
+				 {
+					  m_usb_tx_string("\nRIGHT else");
+				 }
 				 m_green(OFF);
 				 m_red(OFF);
 			 }
 		 }else if (dir == LEFT){
 			 if (theta >= 265 && theta <= 275){
-				 //m_usb_tx_string("\nLEFT fwd");
+				 if(DEBUG ==1)
+				 {
+				 	m_usb_tx_string("\nLEFT fwd");
+				 }
 				 fwd();
 				 m_red(OFF);
 				 m_green(ON);
 			 }else if (theta > 90 && theta < 265){
 				 right();
-				 //m_usb_tx_string("\nLEFT right");
+				 if(DEBUG ==1)
+				 {
+					m_usb_tx_string("\nLEFT right");
+				 }
 				 m_red(ON);
 				 m_green(OFF);
 			 }else if (theta < 90 || theta > 275){
 				 left();
-				 //m_usb_tx_string("\nLEFT left");
+				 if(DEBUG ==1)
+				 {
+					m_usb_tx_string("\nLEFT left");
+				 }
 				 m_green(ON);
 				 m_red(ON);
 			 }else{
-				 //m_usb_tx_string("\nLEFT else");
+				 if(DEBUG ==1)
+				 {
+					m_usb_tx_string("\nLEFT else");
+				 }
 				 m_green(OFF);
 				 m_red(OFF);
 			 }
+		 }
+		 if(DEBUG == 1)
+		 {
+		 	while(!m_usb_rx_available());
+		 	usb_rx_flush();
 		 }
     }
 }
