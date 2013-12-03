@@ -11,6 +11,8 @@
 #include "m_bus.h"
 #include "m_wii.h"
 
+#define DEBUG 0
+
 // Define functions
 int localize(signed char location[]); // function to find position and orientation
 
