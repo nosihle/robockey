@@ -2,33 +2,57 @@
 #include "localization.h"
 
 // buffer for m_wii data
-unsigned int blobs[12] = {355,361,0,358,304,0,423,385,0,403,294,0};
+//unsigned int blobs[12] = {355,361,0,358,304,0,423,385,0,403,294,0};
+unsigned int blobs[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
 unsigned int *x1 = &blobs[0]; unsigned int *y1_ = &blobs[1]; unsigned int *s1 = &blobs[2];
 unsigned int *x2 = &blobs[3]; unsigned int *y2 = &blobs[4]; unsigned int *s2 = &blobs[5];
 unsigned int *x3 = &blobs[6]; unsigned int *y3 = &blobs[7]; unsigned int *s3 = &blobs[8];
 unsigned int *x4 = &blobs[9]; unsigned int *y4 = &blobs[10]; unsigned int *s4 = &blobs[11];
 
 int localize(signed char location[]){
-	m_wii_read(blobs); // place data in buffer
+	int c = m_wii_read(blobs); // place data in buffer
 	// create array of x and y points
 	// flip the x-points to get right hand coordinate system
 	int X[4] = {-1*(*x1), -1*(*x2) , -1*(*x3) ,-1*(*x4)}; 
 	int Y[4] = {*y1_, *y2, *y3, *y4};
+	if(DEBUG == 1)
+	{	
+		m_usb_tx_string("\nreturn value: ");
+		m_usb_tx_int(c);
+		m_usb_tx_string("\nblobs: ");
+		m_usb_tx_int(blobs[0]);
+		m_usb_tx_string(" | ");
+		m_usb_tx_int(X[1]);
+		m_usb_tx_string(" | ");
+		m_usb_tx_int(X[2]);
+		m_usb_tx_string(" | ");
+		m_usb_tx_int(X[3]);
+		m_usb_tx_string(" | ");
+		m_usb_tx_int(Y[0]);
+		m_usb_tx_string(" | ");
+		m_usb_tx_int(Y[1]);
+		m_usb_tx_string(" | ");
+		m_usb_tx_int(Y[2]);
+		m_usb_tx_string(" | ");
+		m_usb_tx_int(Y[3]);
+		m_usb_tx_string("\n");
+	}
 	// count the # of detected blobs
 	int i = 0; int count = 0;
 	static double theta;
 	while (i < 4){
-		if (X[i] != 1023 && Y[i] != 1023){
+		if (X[i] != -1023 && Y[i] != 1023){
 			count++;
 		}
 		i++;
 	}
 	if (count < 4) // if # of blobs is less than 4 return (don't change position)
 	{	
-		//m_usb_tx_string("count 4");	
-		//printf("inside count tin");		
+		if(DEBUG){
+			m_usb_tx_string("count 4");	
+			//printf("inside count tin");		
+		}
 		return (int)theta;
-		//goto last;
 	}
 	// find all possible distances between points (in pixels)
 	int p0[6] = {0,0,0,1,1,2};
