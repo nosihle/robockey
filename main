@@ -16,7 +16,6 @@
 
 #define RIGHT 0
 #define LEFT 1
-#define DEBUG 1
 
 #define CHANNEL 1
 #define RXADDRESS 0x53 //52,53,54  recv for team 5
@@ -110,7 +109,7 @@ int main(void)
 		 theta = localize(loc); // find position and orientation
 		 if(cnt == 0)
 		 {
-			 if (*x < 0) // starting on left side so go to right goal
+			if (*x < 0) // starting on left side so go to right goal
 				dir = RIGHT;
 			else // starting on right side so go to left goal
 				dir = LEFT;
@@ -124,11 +123,11 @@ int main(void)
 			 m_usb_tx_int(*x);
 		 	 m_usb_tx_string("\nstar y: ");
 			 m_usb_tx_int(*y);
-			 //m_wait(100);
 		 }
 		if(*x >= 115 || *x <=-100 )
 		{
 			stop();
+			OCR1B = OCR1A; // 0% duty cycle
 		}
    		if (dir == RIGHT){
 			if (theta >= 85 && theta <= 95){
