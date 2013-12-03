@@ -229,7 +229,7 @@ void timer1_setup(void){
 	set(TIMSK1,OCIE1A); //Enable interrupt when TCNT1 = OCR1A
 	set(TIMSK1,OCIE1B); //Enable interrupt when TCNT1 = OCR1B
 	OCR1A = 20000; // Default frequency: 800Hz
-	OCR1B = 10000; // ^
+	OCR1B = 18000; // ^ duty cycle: 10%
 }
 
 ISR(TIMER1_COMPA_vect){
