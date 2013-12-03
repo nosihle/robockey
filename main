@@ -59,6 +59,7 @@ int main(void)
 	m_clockdivide(0); // 16MHz
 	init();	
 	m_usb_init(); // initialize usb
+	timer1_setup(); // setup timer 1
 	
 	// Setup wireless module
 	m_rf_open(CHANNEL, RXADDRESS, PACKET_LENGTH);
@@ -214,4 +215,27 @@ ISR(INT2_vect) {
 		play = true;
 	else if (buffer[0] == PAUSE)
 		stop();
+}
+
+void timer1_setup(void){
+	//Timer 1 config
+	set(DDRB,6); //Set B6 to output
+	set(TCCR1B,WGM13); //Set to mode 15 (up to OCR1A)
+	set(TCCR1B,WGM12); // ^
+	set(TCCR1A,WGM11); // ^
+	set(TCCR1A,WGM10); // ^
+	set(TCCR1A,COM1B1); //Set at OCR1B, clear at rollover
+	set(TCCR1A,COM1B0); // ^
+	set(TIMSK1,OCIE1A); //Enable interrupt when TCNT1 = OCR1A
+	set(TIMSK1,OCIE1B); //Enable interrupt when TCNT1 = OCR1B
+	OCR1A = 20000; // Default frequency: 800Hz
+	OCR1B = 10000; // ^
+}
+
+ISR(TIMER1_COMPA_vect){
+	clear(MOTOR,MOTOR_EN);
+}
+
+ISR(TIMER1_COMPB_vect){
+	set(MOTOR,MOTOR_EN);
 }
