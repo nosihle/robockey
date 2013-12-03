@@ -1,4 +1,3 @@
-
 #include "localization.h"
 
 // buffer for m_wii data
