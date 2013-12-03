@@ -77,13 +77,18 @@ int main(void)
     {
 		 fwd();
 		 m_wait(2000);
+		 m_red(ON);
 		 rev();
 		 m_wait(2000);
+		 m_green(OFF);
 		 right();
 		 m_wait(2000);
 		 left();
+		 m_red(OFF);
 		 m_wait(2000);
 		 stop();
+		 m_green(ON);
+		 m_red(ON);
     }
 }
 
